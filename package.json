@@ -1,7 +1,7 @@
 {
   "name": "vc-videos-renderer",
   "version": "1.0.0",
-  "description": "Vcam WebGL Videos Merger",
+  "description": "Vcam WebGL Videos/Audios Merger",
   "main": "dist/vc-videos-renderer/VcVideosRenderer.js",
   "scripts": {
     "build": "webpack --mode production",
