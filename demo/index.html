@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vanilla JavaScript WebGL App</title>
+  <style>
+    canvas {
+      border: 1px solid black;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div id="app">
+    <h1>VC Videos/Audios Renderer/Merger</h1>
+    <div>
+      <video id="demo-video1" src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+        muted autoplay crossorigin="anonymous" width="320" height="180" controls></video>
+      <video id="demo-video2" src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4"
+        muted autoplay crossorigin="anonymous" width="320" height="180" controls></video>
+      <video id="demo-video3" src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
+        muted autoplay crossorigin="anonymous" width="320" height="180" controls></video>
+      <video id="demo-video4" src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4"
+        muted autoplay crossorigin="anonymous" width="320" height="180" controls></video>
+      <button id="startButton"> Start Rendering </button>
+    </div>
+    <canvas id="rendering" width="620" height="500" style="width: 620px; height: 500px"></canvas>
+  </div>
+  
+  
+  <video id="mixed-video" autoplay controls></video>
+
+  <script src="../dist/vc-videos-renderer/vc-videos-renderer.js"></script>
+
+  <script>
+    const videoBackgroundColor = [0.12941176470588237, 0.12941176470588237, 0.12941176470588237, 1.0];
+    const frameItems= [
+        {
+          id: '1',
+          type: "video",
+          renderVideo: true,
+          renderAudio: true,
+          displayName: "Contain",
+          videoElement: document.getElementById('demo-video1'),
+          width: 200,
+          height: 200,
+          x: 0,
+          y: 0,
+          objectFit: "contain",
+          borderRadius: 10,
+          backgroundColor: videoBackgroundColor,
+          borderColor: [0.039, 0.039, 0.878, 1.0],
+          borderWidth: 2,
+          innerBorder: {
+            borderColor: [0.039, 1.0, 0.878, 1.0],
+            borderWidth: 2,
+          },
+        },
+        {
+          id: '2',
+          type: "video",
+          renderVideo: true,
+          renderAudio: true,
+          cameraDisabled: true,
+          displayName: "Contain",
+          videoElement: document.getElementById('demo-video2'),
+          width: 200,
+          height: 100,
+          x: 232,
+          y: 13,
+          objectFit: "contain",
+          backgroundColor: videoBackgroundColor,
+          borderColor: [0.039, 0.039, 0.878, 1.0],
+          borderWidth: 2,
+          borderRadius: 10,
+          innerBorder: {
+            borderColor: [0.039, 1.0, 0.878, 1.0],
+            borderWidth: 5,
+          },
+        },
+        {
+          id: '3',
+          type: "video",
+          renderVideo: true,
+          renderAudio: true,
+          isWaiting: true,
+          displayName: "Stretch",
+          videoElement: document.getElementById('demo-video3'),
+          width: 400,
+          height: 100,
+          x: 10,
+          y: 200,
+          objectFit: "stretch",
+          backgroundColor: videoBackgroundColor,
+          borderColor: [0.039, 0.039, 0.878, 1.0],
+          borderWidth: 0,
+          borderRadius: 25,
+          innerBorder: {
+            borderColor: [0.039, 1.0, 0.878, 0.5],
+            borderWidth: 5, 
+          },
+        },
+        {
+          id: '4',
+          type: "video",
+          renderVideo: true,
+          renderAudio: true,
+          audioDisabled: true,
+          isReconnecting: true,
+          reconnectingAvatarURL: "./images/default-reconnecting-avatar.jpg",
+          isWaiting: true,
+          displayName: "Cover",
+          videoElement: document.getElementById('demo-video4'),
+          width: 400,
+          height: 200,
+          x: 10,
+          y: 310,
+          objectFit: "cover",
+          backgroundColor: videoBackgroundColor,
+          borderColor: [0.039, 0.039, 0.878, 1.0],
+          borderWidth: 0,
+          borderRadius: 20
+        },
+        {
+          id: 'text-1',
+          type: "text",
+          text: `We will be using Construction Site Safety Image Dataset Roboflow for this tutorial. To obtain the Construction Site Safety Image Dataset. You can access it from Kaggle, a popular platform for data science competitions,
+           datasets, and machine learning resources. After downloading the dataset, you may need to extract the files from the compressed format (e.g., ZIP or TAR file) if the dataset is packaged.`,
+          floatingText: {
+            float: true,
+            speed: 50
+          },
+          maxWidth: 620,
+          fontSize: 15,
+          fontWeight: "bold",
+          textColor: [0.9, 0.9, 0.9, 1],
+          //backgroundColor: [0, 0, 0, 0.7],
+          backgroundColor: [0, 0, 1, 0.7],
+          padding: [10, 10],
+          xDirection: "left",
+          yDirection: "bottom",
+          x: 0,
+          y: 500
+        }
+      ];
+    const canvas = document.getElementById("rendering")
+    const vc = new VcVideosRenderer(canvas, {
+      debug: true,
+      frameRate: 30
+    });
+
+    const mixedVideoEl = document.getElementById("mixed-video");
+    mixedVideoEl.srcObject = vc.getMixedStream();
+
+    for (const videoInfo of frameItems) {
+      if(videoInfo.type !== "video") continue;
+      videoInfo.videoElement.play();
+    }
+    vc.resetFrame(frameItems);
+    document.getElementById("startButton").addEventListener('click', () => {
+      vc.startDrawing();
+    });
+  </script>
+</body>
+
+</html>
